@@ -1,0 +1,150 @@
+TO CREATE TABLE :
+
+CREATE TABLE CUSTOMER
+(
+    id int PRIMARY key NOT NULL,
+    FirstName nvarchar(40),
+    LastName nvarchar(40),
+    City nvarchar(40),
+    Country nvarchar(40),
+    Phone nvarchar(20)
+);
+
+CREATE TABLE ORDERS
+(
+    id int PRIMARY key NOT NULL,
+    OrderDate DATETIME,
+    OrderNumber nvarchar(10),
+    CustomerId int references CUSTOMER(id),
+    TotalAmount DECIMAL(4,2)
+);
+
+ CREATE TABLE PRODUCT
+(
+    id int PRIMARY key NOT NULL,
+    ProductName nvarchar(50),
+    UnitPrice decimal(12,2),
+    Package NVARCHAR(30),
+    IsDiscontinued BIT
+);
+
+CREATE TABLE OrderItem
+(
+    id int  PRIMARY Key NOT NULL,
+    OrderId int REFERENCES ORDERS(id),
+    ProductId int REFERENCES PRODUCT(id),
+    UnitPrice decimal(12,2),
+    Quantity int 
+
+);
+
+
+Index creation :
+
+CREATE INDEX IndexCustomerName ON CUSTOMER(FirstName);
+CREATE INDEX IndexOrderItemOrderId ON OrderItem(OrderId);
+CREATE INDEX IndexOrderItemProductId ON OrderItem(ProductId);
+CREATE INDEX IndexOrderCustomerId ON ORDERS(CustomerId);
+CREATE INDEX IndexOrderOrderDate ON ORDERS(OrderDate);
+CREATE INDEX IndexProductName ON PRODUCT(ProductName);
+
+Value insertion :
+
+INSERT INTO CUSTOMER VALUES(4,'akshata','sharma','banglore','India', 245678901);
+INSERT INTO CUSTOMER VALUES(5,'aniksha','raut','mumbai','India', 245678901);
+INSERT INTO CUSTOMER VALUES(6,'samiksha','kohli','lucknow','India', 245678901);
+INSERT INTO CUSTOMER VALUES(7,'ishani','adarkar','abc','Europe', 245678901);
+INSERT INTO CUSTOMER VALUES(8,'aushi','deshpande','xyz','Germany', 245678901);
+INSERT INTO CUSTOMER VALUES(8,'aushi','deshpande','xyz','America', 245678901);
+
+INSERT INTO ORDERS VALUES(201,'2022-01-01',101,4, 10);
+INSERT INTO ORDERS VALUES(202,'2022-01-01',102,1, 20);
+INSERT INTO ORDERS VALUES(203,'2022-01-01',103,2, 30);
+INSERT INTO ORDERS VALUES(204,'2022-01-01',104,5, 40);
+INSERT INTO ORDERS VALUES(205,'2022-01-01',105,8, 50);
+
+INSERT INTO OrderItem VALUES(1,201,401,5,2);
+INSERT INTO OrderItem VALUES(2,202,402,10,2);
+INSERT INTO OrderItem VALUES(3,203,403,5,6);
+INSERT INTO OrderItem VALUES(4,204,404,10,4);
+INSERT INTO OrderItem VALUES(5,205,405,10,5);
+
+
+INSERT INTO PRODUCT VALUES(401,'chai',5,'exotic liquids',1);
+INSERT INTO PRODUCT VALUES(402,'masala',10,'exclusive herbs',0);
+INSERT INTO PRODUCT VALUES(403,'deo',5,'fog', 0);
+INSERT INTO PRODUCT VALUES(404,'plant',10,'tulsi', 1);
+INSERT INTO PRODUCT VALUES(405,'perfume',10,'diva',1);
+
+
+COMMANDS :
+
+
+1.Display all Customer Details
+SELECT * FROM CUSTOMER;
+
+2.Write a query to display Country whose name starts with A or I
+SELECT Country FROM CUSTOMER WHERE Country LIKE 'a%' OR Country LIKE 'i%' ; 
+
+
+3.Write a query to display whose name of customer whose third character is i
+SELECT * FROM CUSTOMER WHERE FirstName like '__i%' 
+
+4.Display details of customer who is from germany
+SELECT * FROM CUSTOMER WHERE Country='GERMANY';
+
+5.Display fullname of customer
+ SELECT FirstName, LastName from Customer;
+
+6.Display customer details who has a phone number
+SELECT * FROM CUSTOMER WHERE Phone  IS NOT NULL;
+
+7.Display the customer details whose name holds second letter as U
+SELECT * FROM CUSTOMER WHERE FirstName Like '_u%';
+
+8.Select order details where unit price is greater than 10 and less than 20
+SELECT * FROM ORDERS  ORDERS,OrderItem WHERE ORDERS.OrderId=OrderItem.OrderId AND UnitPrice BETWEEN 10 AND 20;
+
+9.display order details contains shipping address and order arrange by date;
+
+10.print the products supplied by exotic liquids
+select * from PRODUCT WHERE Package='exotic liquids';
+
+12.Print the average quantity ordered for every product
+select AVG(Quantity) from OrderItem GROUP BY ProductId;
+
+
+13.Write a query to display the orders placed by customer with phone number 124567891
+SELECT FirstName ,LastName,OrderId,OrderNumber FROM CUSTOMER ,ORDERS WHERE CUSTOMER.OrderId= ORDERS.OrderId AND Phone='124567891';
+
+
+14.Display orders placed by customers not in london
+SELECT * FROM ORDERS WHERE ORDERS.OrderId=CUSTOMER.CustomerId AND Country IS NOT 'london';
+
+15.Select all the orders which are placed for the product 'chai'
+SELECT OrderId,Package FROM OrderItem,Product WHERE OrderItem.Id = Product.id AND Package='chai';
+
+16.most and least expensive order list
+SELECT MIN(TotalAmount),MAX(TotalAmount) FROM  ORDERS;  
+
+17.Display list of Orders that are discontinued
+SELECT IsDiscontinued FROM PRODUCT WHERE IsDiscontinued = 'FALSE';
+
+18.Where unit stock is less than unit order.
+SELECT ProductName FROM PRODUCT,OrderItem WHERE PRODUCT.Id=OrderItem.OrderId AND PRODUCT.UnitPrice < OrderItem.UnitPrice;
+
+19.DISPLAY ORDER MADE BY EACH CUSTOMER;
+SELECT CUSTOMER.[CUSTOMER.OrderId],FirstName,LastName,City,Country,Phone,OrderId,OrderDate FROM CUSTOMER,ORDERS WHERE CUSTOMER.[CUSTOMER.OrderId]=ORDERS.OrderId;
+
+20.Write a query that determines the customer who has placed the maximum number of orders.
+SELECT COUNT(OrderId) from Orders,Customer WHERE CUSTOMER.[CUSTOMER.OrderId]=ORDERS.CustomerId  GROUP BY(FirstName);
+
+21.Display the customer id whose name has substring 'RA'
+SELECT * FROM CUSTOMER WHERE FirstName='%RA';
+
+
+22.Display the first word of all the customer name.
+SELECT SUBSTRING(FirstName,1,40) AS Firstcharacter FROM CUSTOMER;
+
+
+
